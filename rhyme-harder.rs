@@ -3,61 +3,61 @@ use std;
 #[test]
 fn testLettersDontRepeat_passIfTrue()
 {
-	assert lettersDontRepeat(str::chars("ab"));
+	assert lettersDontRepeat("ab".chars());
 }
 
 #[test]
 fn testLettersDontRepeat_failIfFalse()
 {
-	assert !lettersDontRepeat(str::chars("aba"));
+	assert !lettersDontRepeat("aba".chars());
 }
 
 #[test]
 fn testAFirstIfPresent_passIfIs()
 {
-	assert aIsFirstIfPresent(str::chars("ab"));
+	assert aIsFirstIfPresent("ab".chars());
 }
 
 #[test]
 fn testAFirstIfPresent_passIfNotPresent()
 {
-	assert aIsFirstIfPresent(str::chars("bc"));
+	assert aIsFirstIfPresent("bc".chars());
 }
 
 #[test]
 fn testAFirstIfPresent_failIfIsNot()
 {
-	assert !aIsFirstIfPresent(str::chars("ba"));
+	assert !aIsFirstIfPresent("ba".chars());
 }
 
 #[test]
 fn testZLastIfPresent_passIfIs()
 {
-	assert zIsLastIfPresent(str::chars("az"));
+	assert zIsLastIfPresent("az".chars());
 }
 
 #[test]
 fn testZLastIfPresent_passIfNotPresent()
 {
-	assert zIsLastIfPresent(str::chars("ab"));
+	assert zIsLastIfPresent("ab".chars());
 }
 
 #[test]
 fn testZLastIfPresent_failIfIsNot()
 {
-	assert !zIsLastIfPresent(str::chars("za"));
+	assert !zIsLastIfPresent("za".chars());
 }
 
 #[test]
 fn testContainsAllLetters_succeedIfDoes()
 {
-	assert containsAllLetters(str::chars("abcdefghijklmnopqrstuvwxyz"));
+	assert containsAllLetters("abcdefghijklmnopqrstuvwxyz".chars());
 }
 
 #[test]
 fn testContainsAllLetters_failIfNot()
 {
-	assert !containsAllLetters(str::chars("za"));
+	assert !containsAllLetters("za".chars());
 }
 
 #[test]
@@ -74,9 +74,9 @@ fn testLettersRhyme_failIfDoNot()
 #[test]
 fn testPathIsValid_succeedIfIs()
 {
-	assert pathIsValid(str::chars("a"));
-	assert pathIsValid(str::chars("ab"));
-	assert pathIsValid(str::chars("az"));
+	assert pathIsValid("a".chars());
+	assert pathIsValid("ab".chars());
+	assert pathIsValid("az".chars());
 }
 
 fn pathIsValid(path : [char]) -> bool
@@ -85,7 +85,7 @@ fn pathIsValid(path : [char]) -> bool
 	&& aIsFirstIfPresent(path)
 	&& zIsLastIfPresent(path);
 	let mut index = 0u;
-	while index < vec::len(path) - 1u
+	while index < path.len() - 1u
 	{
 		isValid &= !lettersRhyme(path[index], path[index + 1u]);
 		index += 1u;
@@ -98,11 +98,11 @@ fn fullPathIsValid(path : [char]) -> bool
 	pathIsValid(path) && containsAllLetters(path)
 }
 
-fn lettersDontRepeat(letters : [const char]) -> bool
+fn lettersDontRepeat(letters : [char]) -> bool
 {
 	for letter in letters
 	{
-		if vec::count(letters, letter) > 1u
+		if letters.count(letter) > 1u
 		{
 			ret false;
 		}
@@ -112,20 +112,20 @@ fn lettersDontRepeat(letters : [const char]) -> bool
 
 fn aIsFirstIfPresent(letters : [char]) -> bool
 {
-	!vec::contains(letters, 'a') || letters[0] == 'a'
+	!letters.contains('a') || letters[0] == 'a'
 }
 
 fn zIsLastIfPresent(letters : [char]) -> bool
 {
-	!vec::contains(letters, 'z') || letters[vec::len(letters) - 1u] == 'z'
+	!letters.contains('z') || letters[letters.len() - 1u] == 'z'
 }
 
 fn containsAllLetters(letters : [char]) -> bool
 {
-	let allLetters = str::chars("abcdefghijklmnopqrstuvwxyz");
+	let allLetters = "abcdefghijklmnopqrstuvwxyz".chars();
 	for letter in allLetters
 	{
-		if !vec::contains(letters, letter)
+		if !letters.contains(letter)
 		{
 			ret false;
 		}
@@ -138,7 +138,7 @@ fn lettersRhyme(first : char, second : char) -> bool
 	let rhymeSets = [set("ahjk"),set("iy"),set("bcdegptvz"),set("flmnxs"),set("quw"),set("o"),set("r")];
 	for rhymeSet in rhymeSets
 	{
-		if vec::contains(rhymeSet, first) && vec::contains(rhymeSet, second)
+		if rhymeSet.contains(first) && rhymeSet.contains(second)
 		{
 			ret true;
 		}
@@ -147,5 +147,15 @@ fn lettersRhyme(first : char, second : char) -> bool
 }
 fn set(input : str) -> [char]
 {
-	str::chars(input)
+	input.chars()
+}
+
+impl str_utils for str
+{
+	fn chars() -> [char] {str::chars(self)}
+}
+impl vec_utils<T> for [T]
+{
+	fn count(value:T) -> uint {vec::count(self, value)}
+	fn contains(value:T) -> bool {vec::contains(self, value)}
 }
